@@ -3,6 +3,7 @@
 import os
 import subprocess
 import shlex
+import shutil
 
 # generic path to dCache where ntuples are stored
 inputPath = "/pnfs/desy.de/cms/tier2/store/user/ohlushch/TauIDMVATraining2016/Summer16_25ns_V1_allPhotonsCut/"
