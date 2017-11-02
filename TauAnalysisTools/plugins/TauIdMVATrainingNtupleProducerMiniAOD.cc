@@ -74,24 +74,24 @@ TauIdMVATrainingNtupleProducerMiniAOD::TauIdMVATrainingNtupleProducerMiniAOD(con
 	edm::ParameterSet tauIdDiscriminators = cfg.getParameter<edm::ParameterSet>("tauIdDiscriminators");
 	typedef std::vector<std::string> vstring;
 	vstring tauIdDiscriminatorNames = tauIdDiscriminators.getParameterNamesForType<std::string>();
-	for ( vstring::const_iterator name = tauIdDiscriminatorNames.begin();
-			name != tauIdDiscriminatorNames.end(); ++name ) {
+	for ( vstring::const_iterator name = tauIdDiscriminatorNames.begin(); name != tauIdDiscriminatorNames.end(); ++name )
+	{
 		std::string src = tauIdDiscriminators.getParameter<std::string>(*name);
 		tauIdDiscrEntries_.push_back(tauIdDiscrEntryType(*name, src));
 	}
 
 	edm::ParameterSet isolationPtSums = cfg.getParameter<edm::ParameterSet>("isolationPtSums");
 	vstring isolationPtSumNames = isolationPtSums.getParameterNamesForType<std::string>();
-	for ( vstring::const_iterator name = isolationPtSumNames.begin();
-			name != isolationPtSumNames.end(); ++name ) {
+	for ( vstring::const_iterator name = isolationPtSumNames.begin(); name != isolationPtSumNames.end(); ++name )
+	{
 		std::string src = isolationPtSums.getParameter<std::string>(*name);
 		tauIsolationEntries_.push_back(tauIsolationEntryType(*name, src));
 	}
 
 	edm::ParameterSet vertexCollections = cfg.getParameter<edm::ParameterSet>("vertexCollections");
 	vstring vertexCollectionNames = vertexCollections.getParameterNamesForType<edm::InputTag>();
-	for ( vstring::const_iterator name = vertexCollectionNames.begin();
-			name != vertexCollectionNames.end(); ++name ) {
+	for ( vstring::const_iterator name = vertexCollectionNames.begin(); name != vertexCollectionNames.end(); ++name )
+	{
 		edm::InputTag src = vertexCollections.getParameter<edm::InputTag>(*name);
 		edm::EDGetTokenT<reco::VertexCollection> token = consumes<reco::VertexCollection>(src);
 		vertexCollectionEntries_.push_back(vertexCollectionEntryType(*name, token));
@@ -105,10 +105,12 @@ TauIdMVATrainingNtupleProducerMiniAOD::TauIdMVATrainingNtupleProducerMiniAOD(con
 	loosePFJetIdAlgo_ = new PFJetIDSelectionFunctor(cfgPFJetIdAlgo);
 
 	isMC_ = cfg.getParameter<bool>("isMC");
-	if ( isMC_ ) {
+	if ( isMC_ )
+	{
 		srcGenPileUpSummary_ = cfg.getParameter<edm::InputTag>("srcGenPileUpSummary");
 		tokenGenPileupSummary_ = consumes<std::vector<PileupSummaryInfo> >(srcGenPileUpSummary_);
-	} //else { // FIXME: this does not work since the TauAnalysis/RecoTools does not exist (anymore?)
+	}
+	//else { // FIXME: this does not work since the TauAnalysis/RecoTools does not exist (anymore?)
 		//edm::FileInPath inputFileName = cfg.getParameter<edm::FileInPath>("inputFileNameLumiCalc");
 		//if ( inputFileName.location() != edm::FileInPath::Local /*!inputFileName.isLocal()*/)
 		/*	  throw cms::Exception("UnclEnCalibrationNtupleProducer")
@@ -187,26 +189,20 @@ void TauIdMVATrainingNtupleProducerMiniAOD::beginJob()
 	addBranchI("recJetLooseId");
 	addBranch_EnPxPyPz("leadPFCand");
 	addBranch_EnPxPyPz("leadPFChargedHadrCand");
-	for ( unsigned idx = 0; idx < maxChargedHadrons_; ++idx ) {
+	for ( unsigned idx = 0; idx < maxChargedHadrons_; ++idx )
 		addBranch_chargedHadron(Form("chargedHadron%i", idx + 1));
-	}
-	for ( unsigned idx = 0; idx < maxPiZeros_; ++idx ) {
+
+	for ( unsigned idx = 0; idx < maxPiZeros_; ++idx )
 		addBranch_piZero(Form("piZero%i", idx + 1));
-	}
+
 	for ( std::vector<tauIdDiscrEntryType>::const_iterator tauIdDiscriminator = tauIdDiscrEntries_.begin();
-			tauIdDiscriminator != tauIdDiscrEntries_.end(); ++tauIdDiscriminator ) {
+		tauIdDiscriminator != tauIdDiscrEntries_.end(); ++tauIdDiscriminator )
 		addBranchF(tauIdDiscriminator->branchName_);
-	}
+
 	for ( std::vector<tauIsolationEntryType>::const_iterator tauIsolation = tauIsolationEntries_.begin();
-			tauIsolation != tauIsolationEntries_.end(); ++tauIsolation ) {
-		/*addBranchF(tauIsolation->branchNameChargedIsoPtSum_);
-		addBranchF(tauIsolation->branchNameNeutralIsoPtSum_);
-		addBranchF(tauIsolation->branchNamePUcorrPtSum_);
-		addBranchF(tauIsolation->branchNameNeutralIsoPtSumWeight_);
-		addBranchF(tauIsolation->branchNameFootprintCorrection_);
-		addBranchF(tauIsolation->branchNamePhotonPtSumOutsideSignalCone_);*/
+		tauIsolation != tauIsolationEntries_.end(); ++tauIsolation )
 		addBranchF(tauIsolation->branchName_);
-	}
+
 	addBranch_XYZ("recImpactParamPCA");
 	addBranchF("recImpactParam");
 	addBranchF("recImpactParamSign");
@@ -321,31 +317,28 @@ namespace
 		return tau.isolationGammaCands();
 	}
 
-	bool isInside(float photon_pt, float deta, float dphi){
+	bool isInside(float photon_pt, float deta, float dphi)
+	{
+		if (photon_pt == 0) return false;
 
-		if(photon_pt==0){return false;}
-
-		if(
-			(dphi < TMath::Min(0.3, TMath::Max(0.05, 0.352476*TMath::Power(photon_pt, -0.707716)))) && \
-			(deta < TMath::Min(0.15, TMath::Max(0.05, 0.197077*TMath::Power(photon_pt, -0.658701))))
-		){
+		if ( (dphi < TMath::Min(0.3, TMath::Max(0.05, 0.352476*TMath::Power(photon_pt, -0.707716)))) && \
+			(deta < TMath::Min(0.15, TMath::Max(0.05, 0.197077*TMath::Power(photon_pt, -0.658701)))) )
 			return true;
-		}
 
 		return false;
-
 	}
 
-	float returnChi2(const pat::Tau& tau){
-
+	float returnChi2(const pat::Tau& tau) {
 		return tau.leadingTrackNormChi2();
 	}
 
-	float returnEratio(const pat::Tau& tau){
-
+	float returnEratio(const pat::Tau& tau)
+	{
 		Float_t total = tau.ecalEnergy() + tau.hcalEnergy();
-		if(total==0) return -1;
-		else return tau.ecalEnergy()/total;
+
+		if (total == 0) return -1;
+		else
+			return tau.ecalEnergy()/total;
 	}
 
 	float pt_weighted_dx(const pat::Tau& tau, int mode = 0, int var = 0, int decaymode = -1, float ptMin = 0.5)
@@ -382,25 +375,23 @@ namespace
 		return 0.;
 	}
 
-	float pt_weighted_dr_signal(const pat::Tau& tau, int dm = -1, float ptMin = 0.5)
-	{
+	float pt_weighted_dr_signal(const pat::Tau& tau, int dm = -1, float ptMin = 0.5) {
 		return pt_weighted_dx(tau, 0, 0, dm, ptMin);
 	}
 
-	float pt_weighted_deta_strip(const pat::Tau& tau, int dm = -1, float ptMin = 0.5)
-	{
-		if (dm == 10) return pt_weighted_dx(tau, 2, 1, dm, ptMin);
+	float pt_weighted_deta_strip(const pat::Tau& tau, int dm = -1, float ptMin = 0.5) {
+		if (dm == 10)
+			return pt_weighted_dx(tau, 2, 1, dm, ptMin);
 		return pt_weighted_dx(tau, 1, 1, dm, ptMin);
 	}
 
-	float pt_weighted_dphi_strip(const pat::Tau& tau, int dm = -1, float ptMin = 0.5)
-	{
-		if (dm == 10) return pt_weighted_dx(tau, 2, 2, dm, ptMin);
+	float pt_weighted_dphi_strip(const pat::Tau& tau, int dm = -1, float ptMin = 0.5) {
+		if (dm == 10)
+			return pt_weighted_dx(tau, 2, 2, dm, ptMin);
 		return pt_weighted_dx(tau, 1, 2, dm, ptMin);
 	}
 
-	float pt_weighted_dr_iso(const pat::Tau& tau, int dm = -1, float ptMin = 0.5)
-	{
+	float pt_weighted_dr_iso(const pat::Tau& tau, int dm = -1, float ptMin = 0.5) {
 		return pt_weighted_dx(tau, 2, 0, dm, ptMin);
 	}
 
@@ -477,14 +468,18 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 	else setValue_EnPxPyPz("leadPFCand", reco::Candidate::LorentzVector(0.,0.,0.,0.));
 	if ( recTau->leadChargedHadrCand().isNonnull() ) setValue_EnPxPyPz("leadPFChargedHadrCand", recTau->leadChargedHadrCand()->p4());
 	else setValue_EnPxPyPz("leadPFChargedHadrCand", reco::Candidate::LorentzVector(0.,0.,0.,0.));
-	for ( unsigned idx = 0; idx < maxChargedHadrons_; ++idx ) {
+	for ( unsigned idx = 0; idx < maxChargedHadrons_; ++idx )
+	{
 		std::string branchName = Form("chargedHadron%i", idx + 1);
-		if ( recTau->signalChargedHadrCands().size() > idx ) setValue_chargedHadron(branchName, recTau->signalChargedHadrCands()[idx]);
+		if (recTau->signalChargedHadrCands().size() > idx)
+			setValue_chargedHadron(branchName, recTau->signalChargedHadrCands()[idx]);
 		//else setValue_chargedHadron(branchName, 0); // TODO: implement sensible else statement
 	}
-	for ( unsigned idx = 0; idx < maxPiZeros_; ++idx ) {
+	for ( unsigned idx = 0; idx < maxPiZeros_; ++idx )
+	{
 		std::string branchName = Form("piZero%i", idx + 1);
-		if ( recTau->signalGammaCands().size() > idx ) setValue_piZero(branchName, recTau->signalGammaCands()); // only 1 piZero can be reconstructed on MiniAOD
+		if (recTau->signalGammaCands().size() > idx)
+			setValue_piZero(branchName, recTau->signalGammaCands()); // only 1 piZero can be reconstructed on MiniAOD
 	}
 	setValue_XYZ("recImpactParamPCA", recTau->dxy_PCA());
 	setValueF("recImpactParam", recTau->dxy());
@@ -497,16 +492,20 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 	setValue_XYZ("recDecayVertex", recTau->secondaryVertexPos()); // not filled in PATTauProducer.cc !!!
 	setValue_Cov("recDecayVertexCov", recTau->secondaryVertexCov()); // not filled in PATTauProducer.cc !!!
 	const reco::VertexRef secVertex = recTau->secondaryVertex(); // not filled in PATTauProducer.cc !!!
-	if(secVertex.isNonnull())setValueF("recDecayVertexChi2", recTau->secondaryVertex()->normalizedChi2());
-	else setValueF("recDecayVertexChi2",  999.);
+	if (secVertex.isNonnull())
+		setValueF("recDecayVertexChi2", recTau->secondaryVertex()->normalizedChi2());
+	else
+		setValueF("recDecayVertexChi2",  999.);
 	setValue_XYZ("recDecayDist", recTau->flightLength());
 	setValue_Cov("recDecayDistCov", recTau->flightLengthCov()); // since neither primaryVertexCov nor secondaryVertexCov are filled by PATTauProducer.cc this is always 0 !!!
 	setValueF("recDecayDistSign", recTau->flightLengthSig());
 	setValue_XYZ("recEvtVertex", recTau->primaryVertexPos()); // not filled in PATTauProducer.cc !!!
 	setValue_Cov("recEvtVertexCov", recTau->primaryVertexCov()); // not filled in PATTauProducer.cc !!!
+
 	//1d IP & Variables from Francesco
 	GlobalVector direction(recTau->p4().px(), recTau->p4().py(), recTau->p4().pz());
-	if(recTau->hasSecondaryVertex()){
+	if (recTau->hasSecondaryVertex())
+	{
 		// primaryVertex is not filled in PATTauProducer.cc !!!
 		/*float recDecayDist2D_ = reco::SecondaryVertex::computeDist2d(*(recTau->primaryVertex()), *secVertex, direction, true).value();
 		float recDecayDistSign2D_ = reco::SecondaryVertex::computeDist2d(*(recTau->primaryVertex()), *secVertex, direction, true).significance();
@@ -515,7 +514,8 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 		setValueF("recDecayDist2D", -999.);
 		setValueF("recDecayDistSign2D", -999.);
 		// 3-prong+pi0 does not originate from a1 decay!
-		if(recTau->decayMode() == 10){
+		if (recTau->decayMode() == 10)
+		{
 			// calculate difference between maximally allowed Gottfried-Jackson angle (angle between tau and a1 momentum)
 			// and measured Gottfried-Jackson angle from flightlength vector and tau momentum
 			// thetaGJmax = arcsin( ( m_tau^2 - m_a1^2 ) / ( 2 * m_tau * mag(p_a1) ) )
@@ -529,21 +529,25 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 			setValueF("recTauGJangleMeasured", thetaGJmeasured);
 			setValueF("recTauGJangleDiff", thetaGJmeasured - thetaGJmax);
 		}
-		else{
+		else
+		{
 			setValueF("recTauGJangleMeasured", -999.);
 			setValueF("recTauGJangleDiff", -999.);
 		}
 	}
-	else{
+	else
+	{
 		setValueF("recDecayDist2D", -999.);
 		setValueF("recDecayDistSign2D", -999.);
 		setValueF("recTauGJangleMeasured", -999.);
 		setValueF("recTauGJangleDiff", -999.);
 	}
 
+	/////////////////////////////////////////////
 	edm::ESHandle<TransientTrackBuilder> transTrackBuilder;
 	es.get<TransientTrackRecord>().get("TransientTrackBuilder",transTrackBuilder);
-	if ( recTau->leadChargedHadrCand().isNonnull() && recTau->leadChargedHadrCand()->bestTrack() != 0){
+	if (recTau->leadChargedHadrCand().isNonnull() && recTau->leadChargedHadrCand()->bestTrack() != 0)
+	{
 		// primaryVertex is not filled in PATTauProducer.cc !!!
 		/*const reco::Track* leadtrk = recTau->leadChargedHadrCand()->bestTrack();
 		reco::TransientTrack ttrk = transTrackBuilder->build(&*leadtrk);
@@ -558,16 +562,20 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 		setValueF("recDecayLengthTk1", -999.);
 		setValueF("recDecayLengthSignTk1", -999.);
 	}
-	else{
+	else
+	{
 		setValueF("recImpactParamZ", -999.);
 		setValueF("recImpactParamSignZ", -999.);
 		setValueF("recDecayLengthTk1", -999.);
 		setValueF("recDecayLengthSignTk1", -999.);
 	}
-	if(recTau->signalChargedHadrCands().size() > 1){
+
+	if (recTau->signalChargedHadrCands().size() > 1)
+	{
 		const reco::CandidatePtrVector SigChCands = recTau->signalChargedHadrCands();
 		const reco::Track* leadtrk2 = SigChCands[1]->bestTrack();
-		if(leadtrk2){
+		if (leadtrk2)
+		{
 			// primaryVertex is not filled in PATTauProducer.cc !!!
 			/*reco::TransientTrack ttrk2 = transTrackBuilder->build(&*leadtrk2);
 			GlobalVector direction(recTau->p4().px(), recTau->p4().py(), recTau->p4().pz());
@@ -592,7 +600,8 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 			setValueF("recDecayLengthTk2", -999.);
 			setValueF("recDecayLengthSignTk2", -999.);
 		}
-		else{
+		else
+		{
 			setValueF("recImpactParamTk2", -999.);
 			setValueF("recImpactParamSignTk2", -999.);
 			setValueF("recImpactParam3DTk2", -999.);
@@ -603,7 +612,8 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 			setValueF("recDecayLengthSignTk2", -999.);
 		}
 	}
-	else{
+	else
+	{
 		setValueF("recImpactParamTk2", -999.);
 		setValueF("recImpactParamSignTk2", -999.);
 		setValueF("recImpactParam3DTk2", -999.);
@@ -613,10 +623,14 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 		setValueF("recDecayLengthTk2", -999.);
 		setValueF("recDecayLengthSignTk2", -999.);
 	}
-	if(recTau->signalChargedHadrCands().size() > 2){
+
+	if (recTau->signalChargedHadrCands().size() > 2)
+	{
 		const reco::CandidatePtrVector SigChCands = recTau->signalChargedHadrCands();
 		const reco::Track* leadtrk3= SigChCands[2]->bestTrack();
-		if(leadtrk3){
+
+		if (leadtrk3)
+		{
 			// primaryVertex is not filled in PATTauProducer.cc !!!
 			/*reco::TransientTrack ttrk3 = transTrackBuilder->build(&*leadtrk3);
 			GlobalVector direction(recTau->p4().px(), recTau->p4().py(), recTau->p4().pz());
@@ -641,7 +655,8 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 			setValueF("recDecayLengthTk3", -999.);
 			setValueF("recDecayLengthSignTk3", -999.);
 		}
-		else{
+		else
+		{
 			setValueF("recImpactParamTk3", -999.);
 			setValueF("recImpactParamSignTk3", -999.);
 			setValueF("recImpactParam3DTk3", -999.);
@@ -652,7 +667,8 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 			setValueF("recDecayLengthSignTk3", -999.);
 		}
 	}
-	else{
+	else
+	{
 		setValueF("recImpactParamTk3", -999.);
 		setValueF("recImpactParamSignTk3", -999.);
 		setValueF("recImpactParam3DTk3", -999.);
@@ -662,21 +678,16 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 		setValueF("recDecayLengthTk3", -999.);
 		setValueF("recDecayLengthSignTk3", -999.);
 	}
+
 	/////////////////////////////////////////////
 	for ( std::vector<tauIdDiscrEntryType>::const_iterator tauIdDiscriminator = tauIdDiscrEntries_.begin();
-			tauIdDiscriminator != tauIdDiscrEntries_.end(); ++tauIdDiscriminator ) {
+			tauIdDiscriminator != tauIdDiscrEntries_.end(); ++tauIdDiscriminator )
 		setValueF(tauIdDiscriminator->branchName_, recTau->tauID(tauIdDiscriminator->src_));
-	}
+
 	for ( std::vector<tauIsolationEntryType>::const_iterator tauIsolation = tauIsolationEntries_.begin();
-			tauIsolation != tauIsolationEntries_.end(); ++tauIsolation ) {
-		/*setValueF(tauIsolation->branchNameChargedIsoPtSum_, recTau->tauID(tauIsolation->branchNameChargedIsoPtSum_));
-		setValueF(tauIsolation->branchNameNeutralIsoPtSum_, recTau->tauID(tauIsolation->branchNameNeutralIsoPtSum_));
-		setValueF(tauIsolation->branchNamePUcorrPtSum_, recTau->tauID(tauIsolation->branchNamePUcorrPtSum_));
-		setValueF(tauIsolation->branchNameNeutralIsoPtSumWeight_, recTau->tauID(tauIsolation->branchNameNeutralIsoPtSumWeight_));
-		setValueF(tauIsolation->branchNameFootprintCorrection_, recTau->tauID(tauIsolation->branchNameFootprintCorrection_));
-		setValueF(tauIsolation->branchNamePhotonPtSumOutsideSignalCone_, recTau->tauID(tauIsolation->branchNamePhotonPtSumOutsideSignalCone_));*/
+			tauIsolation != tauIsolationEntries_.end(); ++tauIsolation )
 		setValueF(tauIsolation->branchName_, recTau->tauID(tauIsolation->src_));
-	}
+
 	//variables from Yuta for dynamic strip
 	int tau_decaymode = recTau->decayMode();
 
@@ -691,13 +702,11 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 		setValueF("recTauPtWeightedDphiStrip_ptGt" + ptMin_allPhotonsVariables.at(iPtMin), pt_weighted_dphi_strip(*recTau, tau_decaymode, std::stof(ptMin_allPhotonsVariables.at(iPtMin))));
 		setValueF("recTauPtWeightedDrSignal_ptGt" + ptMin_allPhotonsVariables.at(iPtMin), pt_weighted_dr_signal(*recTau, tau_decaymode, std::stof(ptMin_allPhotonsVariables.at(iPtMin))));
 		setValueF("recTauPtWeightedDrIsolation_ptGt" + ptMin_allPhotonsVariables.at(iPtMin), pt_weighted_dr_iso(*recTau, tau_decaymode, std::stof(ptMin_allPhotonsVariables.at(iPtMin))));
-
 	}
 
 	setValueI("recTauNphoton", n_photons_total(*recTau));
-	for (unsigned iPtMin = 0; iPtMin < ptMin_nPhotons_.size(); iPtMin++) {
+	for (unsigned iPtMin = 0; iPtMin < ptMin_nPhotons_.size(); iPtMin++)
 		setValueI("recTauNphoton_ptGt"+ptMin_nPhotons_.at(iPtMin), n_photons_total(*recTau, std::stof(ptMin_nPhotons_.at(iPtMin))));
-	}
 
 	setValueF("photonPtSumOutsideSignalCone_default", getPhotonPtSumOutsideSignalCone(*recTau));
 	for (unsigned iPtMin = 0; iPtMin < ptMin_photonPtSumOutsideSignalCone.size(); iPtMin++)
@@ -712,31 +721,35 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setRecTauValues(const pat::TauRef& r
 	setValueF("recTauLeadingTrackChi2", returnChi2(*recTau));
 	setValueI("recTauNphotonSignal", recTau->signalGammaCands().size());
 	setValueI("recTauNphotonIso", recTau->isolationGammaCands().size());
-	setValueI("recTauNphotonTotal", recTau->signalGammaCands().size()+recTau->isolationGammaCands().size());
+	setValueI("recTauNphotonTotal", recTau->signalGammaCands().size() + recTau->isolationGammaCands().size());
 
 	edm::Handle<reco::VertexCollection> vertices;
 	evt.getByToken(vertexToken_, vertices);
-	if ( vertices->size() >= 1 ) {
+	if ( vertices->size() >= 1 )
+	{
 		// primaryVertex is not filled in PATTauProducer.cc !!!
 		//float recChi2DiffEvtVertex_ = (vertices->front().normalizedChi2() - recTau->primaryVertex()->normalizedChi2());
 		//setValueF("recChi2DiffEvtVertex", recChi2DiffEvtVertex_);
 		setValueF("recChi2DiffEvtVertex", -999.);
 	}
-	else{ setValueF("recChi2DiffEvtVertex", -999.); }
+	else setValueF("recChi2DiffEvtVertex", -999.);
 
 }
 
 void TauIdMVATrainingNtupleProducerMiniAOD::setGenTauMatchValues(
 	const reco::Candidate::LorentzVector& recTauP4, const pat::PackedGenParticle* genTau, const reco::Candidate::LorentzVector& genVisTauP4, int genTauDecayMode)
 {
-	if ( genTau ) {
+	if ( genTau )
+	{
 		setValue_EnPxPyPz("genTau", genTau->p4());
 		setValueF("genTauDeltaR", deltaR(genTau->p4(), recTauP4));
 		setValue_EnPxPyPz("genVisTau", genVisTauP4);
 		setValueF("genVisTauDeltaR", deltaR(genVisTauP4, recTauP4));
 		setValueI("genTauDecayMode", genTauDecayMode);
 		setValueI("genTauMatch", 1);
-	} else {
+	}
+	else
+	{
 		setValue_EnPxPyPz("genTau", reco::Candidate::LorentzVector(0.,0.,0.,0.));
 		setValueF("genTauDeltaR", 1.e+3);
 		setValue_EnPxPyPz("genVisTau", reco::Candidate::LorentzVector(0.,0.,0.,0.));
@@ -749,14 +762,17 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setGenTauMatchValues(
 void TauIdMVATrainingNtupleProducerMiniAOD::setGenTauMatchValues(
 	const reco::Candidate::LorentzVector& recTauP4, const reco::GenParticle* genTau, const reco::Candidate::LorentzVector& genVisTauP4, int genTauDecayMode)
 {
-	if ( genTau ) {
+	if ( genTau )
+	{
 		setValue_EnPxPyPz("genTau", genTau->p4());
 		setValueF("genTauDeltaR", deltaR(genTau->p4(), recTauP4));
 		setValue_EnPxPyPz("genVisTau", genVisTauP4);
 		setValueF("genVisTauDeltaR", deltaR(genVisTauP4, recTauP4));
 		setValueI("genTauDecayMode", genTauDecayMode);
 		setValueI("genTauMatch", 1);
-	} else {
+	}
+	else
+	{
 		setValue_EnPxPyPz("genTau", reco::Candidate::LorentzVector(0.,0.,0.,0.));
 		setValueF("genTauDeltaR", 1.e+3);
 		setValue_EnPxPyPz("genVisTau", reco::Candidate::LorentzVector(0.,0.,0.,0.));
@@ -768,12 +784,15 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setGenTauMatchValues(
 
 void TauIdMVATrainingNtupleProducerMiniAOD::setGenParticleMatchValues(const std::string& branchName, const reco::Candidate::LorentzVector& recTauP4, const pat::PackedGenParticle* genParticle)
 {
-	if ( genParticle ) {
+	if ( genParticle )
+	{
 		setValue_EnPxPyPz(branchName, genParticle->p4());
 		setValueI(std::string(branchName).append("Match"), 1);
 		setValueF(std::string(branchName).append("DeltaR"), deltaR(genParticle->p4(), recTauP4));
 		setValueI(std::string(branchName).append("PdgId"), genParticle->pdgId());
-	} else {
+	}
+	else
+	{
 		setValue_EnPxPyPz(branchName, reco::Candidate::LorentzVector(0.,0.,0.,0.));
 		setValueI(std::string(branchName).append("Match"), 0);
 		setValueF(std::string(branchName).append("DeltaR"), 1.e+3);
@@ -783,12 +802,15 @@ void TauIdMVATrainingNtupleProducerMiniAOD::setGenParticleMatchValues(const std:
 
 void TauIdMVATrainingNtupleProducerMiniAOD::setGenParticleMatchValues(const std::string& branchName, const reco::Candidate::LorentzVector& recTauP4, const reco::GenParticle* genParticle)
 {
-	if ( genParticle ) {
+	if ( genParticle )
+	{
 		setValue_EnPxPyPz(branchName, genParticle->p4());
 		setValueI(std::string(branchName).append("Match"), 1);
 		setValueF(std::string(branchName).append("DeltaR"), deltaR(genParticle->p4(), recTauP4));
 		setValueI(std::string(branchName).append("PdgId"), genParticle->pdgId());
-	} else {
+	}
+	else
+	{
 		setValue_EnPxPyPz(branchName, reco::Candidate::LorentzVector(0.,0.,0.,0.));
 		setValueI(std::string(branchName).append("Match"), 0);
 		setValueF(std::string(branchName).append("DeltaR"), 1.e+3);
@@ -801,9 +823,11 @@ namespace
 	void findDaughters(const pat::PackedGenParticle* mother, std::vector<const pat::PackedGenParticle*>& daughters, int status)
 	{
 		unsigned numDaughters = mother->numberOfDaughters();
-		for ( unsigned iDaughter = 0; iDaughter < numDaughters; ++iDaughter ) {
+		for ( unsigned iDaughter = 0; iDaughter < numDaughters; ++iDaughter )
+		{
 			const pat::PackedGenParticle* daughter = dynamic_cast<const pat::PackedGenParticle*>(mother->daughter(iDaughter));
-			if ( status == -1 || daughter->status() == status ) daughters.push_back(daughter);
+
+			if (status == -1 || daughter->status() == status) daughters.push_back(daughter);
 			findDaughters(daughter, daughters, status);
 		}
 	}
@@ -811,35 +835,37 @@ namespace
 	void findDaughters(const reco::GenParticle* mother, std::vector<const reco::GenParticle*>& daughters, int status)
 	{
 		unsigned numDaughters = mother->numberOfDaughters();
-		for ( unsigned iDaughter = 0; iDaughter < numDaughters; ++iDaughter ) {
+		for ( unsigned iDaughter = 0; iDaughter < numDaughters; ++iDaughter )
+		{
 			const reco::GenParticle* daughter = mother->daughterRef(iDaughter).get();
+
 			if ( status == -1 || daughter->status() == status ) daughters.push_back(daughter);
 			findDaughters(daughter, daughters, status);
 		}
 	}
 
-	bool isNeutrino(const reco::GenParticle* daughter)
-	{
+	bool isNeutrino(const reco::GenParticle* daughter) {
 		return ( TMath::Abs(daughter->pdgId()) == 12 || TMath::Abs(daughter->pdgId()) == 14 || TMath::Abs(daughter->pdgId()) == 16 );
 	}
 
 	reco::Candidate::LorentzVector getVisMomentum(const std::vector<const reco::GenParticle*>& daughters, int status)
 	{
 		reco::Candidate::LorentzVector p4Vis(0,0,0,0);
+
 		for ( std::vector<const reco::GenParticle*>::const_iterator daughter = daughters.begin();
-				daughter != daughters.end(); ++daughter ) {
-			if ( (status == -1 || (*daughter)->status() == status) && !isNeutrino(*daughter) ) {
-				p4Vis += (*daughter)->p4();
-			}
-		}
+				daughter != daughters.end(); ++daughter )
+			if ( (status == -1 || (*daughter)->status() == status) && !isNeutrino(*daughter) ) p4Vis += (*daughter)->p4();
+
 		return p4Vis;
 	}
 
 	reco::Candidate::LorentzVector getVisMomentum(const reco::GenParticle* genTau)
 	{
 		std::vector<const reco::GenParticle*> stableDaughters;
+
 		findDaughters(genTau, stableDaughters, 1);
 		reco::Candidate::LorentzVector genVisTauP4 = getVisMomentum(stableDaughters, 1);
+
 		return genVisTauP4;
 	}
 
