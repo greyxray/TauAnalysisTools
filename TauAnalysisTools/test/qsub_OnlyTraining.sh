@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 # $1 : Makefile_runTauIdMVATraining_tauId_v3_0_optaDBAll
 cat > $1.zsh <<EOF
 #!/bin/zsh
@@ -13,7 +13,7 @@ cat > $1.zsh <<EOF
 #$ -l h_vmem=32G
 #
 #(use hh site)
-#$ -l site=hh 
+#$ -l site=hh
 #(stderr and stdout are merged together to stdout)
 #$ -j y
 #
@@ -27,7 +27,8 @@ cat > $1.zsh <<EOF
 #$ -o $1.out
 #
 #$ -e $1.err
-nice /afs/desy.de/user/g/glusheno/RWTH/MVAtraining/CMSSW_8_0_26_patch1/bin/slc6_amd64_gcc530/trainTauIdMVA /nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_allPhotonsCut/tauId_v3_0/trainfilesfinal_v1/$1.py &> /nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_allPhotonsCut/tauId_v3_0/trainfilesfinal_v1/$1.log
+#nice /afs/desy.de/user/g/glusheno/RWTH/MVAtraining/CMSSW_8_0_26_patch1/bin/slc6_amd64_gcc530/trainTauIdMVA /nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_13Reretrainings/tauId_v3_0/trainfilesfinal_v1/$1.py &> /nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_13Reretrainings/tauId_v3_0/trainfilesfinal_v1/$1.log
+nice /afs/desy.de/user/g/glusheno/RWTH/MVAtraining/CMSSW_8_0_26_patch1/bin/slc6_amd64_gcc530/trainTauIdMVA /nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_2017strategy/tauId_v3_0/trainfilesfinal_v1/$1.py &> /nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_2017strategy/tauId_v3_0/trainfilesfinal_v1/$1.log
 
 EOF
 
