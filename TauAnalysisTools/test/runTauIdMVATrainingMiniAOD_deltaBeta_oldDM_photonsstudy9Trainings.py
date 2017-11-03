@@ -373,6 +373,8 @@ mvaDiscriminators = {
         'legendEntry'         : "signal cone, photon cut 1.5",
         'color'               : 4
     },
+
+    # These are performing worse
     'mvaIsolation3HitsDeltaR05opt1aLTDB_photonPtSumOutsideSignalConedRgt0p1PtGt0p5' : {
         'preselection'        : preselection_oldDMs,
         'applyPtReweighting'  : True,
@@ -595,6 +597,8 @@ mvaDiscriminators = {
         'legendEntry'         : "fixed cone, photon cut 1.5",
         'color'               : 7
     },
+
+    # These are performing worse
     'mvaIsolation3HitsDeltaR05opt1aLTDB_photonPtSumOutsideSignalConePtGt0p5_norectauphot' : {
         'preselection'        : preselection_oldDMs,
         'applyPtReweighting'  : True,
@@ -802,6 +806,8 @@ mvaDiscriminators = {
         'legendEntry'         : "signal cone, photon cut 1.5, no add vars",
         'color'               : 101
     },
+
+    # These are performing worse
     'mvaIsolation3HitsDeltaR05opt1aLTDB_photonPtSumOutsideSignalConedRgt0p1PtGt0p5_norectauphot' : {
         'preselection'        : preselection_oldDMs,
         'applyPtReweighting'  : True,
