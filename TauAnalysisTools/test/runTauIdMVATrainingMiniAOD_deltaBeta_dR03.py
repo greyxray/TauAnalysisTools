@@ -68,11 +68,19 @@ for tval in trainings.values():
     replaceCommomns('commonSpectatorVariables', commonsDict['commonSpectatorVariables'], tval["spectatorVariables"])
 
 # DO NOT process isodR03 and isodR05 together! - different input variables
+# preselection root-files can be shared only if thew follow the same preselection choice (1 of 4)
 mvaDiscriminators = {
-    'mvaIsolation3HitsDeltaR03opt1aLTDB': trainings['mvaIsolation3HitsDeltaR03opt1aLTDB'],
+    # 'mvaIsolation3HitsDeltaR03opt1aLTDB': trainings['mvaIsolation3HitsDeltaR03opt1aLTDB'], # this one should have different presel input file
+    'mvaIsolation3HitsDeltaR03opt1aLTDB': trainings['mvaIsolation3HitsDeltaR03opt1aLTDB'], # only untill will be possible to lead the trainings
     'mvaIsolation3HitsDeltaR03opt2aLTDB': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB'],
-    'mvaIsolation3HitsDeltaR03opt2aLTDB_1p0': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_1p0']
+    'mvaIsolation3HitsDeltaR03opt2aLTDB_0p5': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_0p5'],
+    'mvaIsolation3HitsDeltaR03opt2aLTDB_1p0': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_1p0'],
+    'mvaIsolation3HitsDeltaR03opt2aLTDB_1p5': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_1p5']
 }
+
+# to ensure the final reweighting root files will be suitable for larger spectra of trainings
+for value in mvaDiscriminators.values():
+    value["spectatorVariables"] += commonsDict['commonOtherVariables']
 
 cutDiscriminators = {
     'rawMVAoldDMdR03wLT': cutDiscriminatorsAll['rawMVAoldDMdR03wLT']
@@ -81,9 +89,11 @@ cutDiscriminators = {
 plots = {
     'mvaIsolation_optDeltaR03BDeltaBeta' : {
         'graphs' : [
-            'mvaIsolation3HitsDeltaR03opt1aLTDB',
+            # 'mvaIsolation3HitsDeltaR03opt1aLTDB',
             'mvaIsolation3HitsDeltaR03opt2aLTDB',
+            'mvaIsolation3HitsDeltaR03opt2aLTDB_0p5',
             'mvaIsolation3HitsDeltaR03opt2aLTDB_1p0',
+            'mvaIsolation3HitsDeltaR03opt2aLTDB_1p5',
             'rawMVAoldDMdR03wLT'
         ]
     }

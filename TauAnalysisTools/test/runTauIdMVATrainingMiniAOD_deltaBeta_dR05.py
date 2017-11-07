@@ -70,20 +70,31 @@ for tval in trainings.values():
 # DO NOT process isodR03 and isodR05 together! - different input variables
 # preselection root-files can be shared only if thew follow the same preselection choice (1 of 4)
 mvaDiscriminators = {
-    'mvaIsolation3HitsDeltaR05opt2aLTDB_1p0': trainings['mvaIsolation3HitsDeltaR05opt2aLTDB_1p0'], # this one should have different presel input file
-    'mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p0': trainings['mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p0']
+    # 'mvaIsolation3HitsDeltaR05opt2aLTDB_1p0': trainings['mvaIsolation3HitsDeltaR05opt2aLTDB_1p0'], # this one should have different presel input file
+    # 'mvaIsolation3HitsDeltaR05opt1aLTDB': trainings['mvaIsolation3HitsDeltaR05opt1aLTDB'], # only untill will be possible to lead the trainings
+    'mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_0p5': trainings['mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_0p5'],
+    'mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p0': trainings['mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p0'],
+    'mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p5': trainings['mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p5']
 }
 
+# to ensure the final reweighting root files will be suitable for larger spectra of trainings
+for value in mvaDiscriminators.values():
+    value["spectatorVariables"] += commonsDict['commonOtherVariables']
+
 cutDiscriminators = {
-    'rawMVAoldDMwLT': cutDiscriminatorsAll['rawMVAoldDMwLT']
+    'rawMVAnewDMwLT': cutDiscriminatorsAll['rawMVAnewDMwLT']
 }
 
 plots = {
-    'mvaIsolation_optDeltaR03BDeltaBeta' : {
+    'mvaIsolation_optDeltaR05BDeltaBeta' : {
         'graphs' : [
-            'mvaIsolation3HitsDeltaR05opt2aLTDB_1p0',
+            # 'mvaIsolation3HitsDeltaR05opt2aLTDB_1p0',
+            # 'mvaIsolation3HitsDeltaR05opt1aLTDB',
+            'mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_0p5',
             'mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p0',
-            'rawMVAoldDMwLT'
+            'mvaIsolation3HitsDeltaR05opt2aLTDB_newDM_1p5',
+            'rawMVAnewDMwLT'
+            #'rawMVAnewDMwLT2016'
         ]
     }
 }
