@@ -72,6 +72,105 @@ if type == 'SignalMC':
 else:
     isSignal = False
 #--------------------------------------------------------------------------------
+from RecoTauTag.RecoTau.TauDiscriminatorTools import noPrediscriminants
+process.load('RecoTauTag.Configuration.loadRecoTauTagMVAsFromPrepDB_cfi')
+from RecoTauTag.RecoTau.PATTauDiscriminationByMVAIsolationRun2_cff import *
+
+process.rerunDiscriminationByIsolationOldDMMVArun2v1raw = patDiscriminationByIsolationMVArun2v1raw.clone(
+    PATTauProducer = cms.InputTag('slimmedTaus'),
+    Prediscriminants = noPrediscriminants,
+    loadMVAfromDB = cms.bool(True),
+    mvaName = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1"),
+    mvaOpt = cms.string("DBoldDMwLT"),
+    requireDecayMode = cms.bool(True),
+    verbosity = cms.int32(0)
+)
+
+process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose = patDiscriminationByIsolationMVArun2v1VLoose.clone(
+    PATTauProducer = cms.InputTag('slimmedTaus'),    
+    Prediscriminants = noPrediscriminants,
+    toMultiplex = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1raw'),
+    key = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1raw:category'),
+    loadMVAfromDB = cms.bool(True),
+    mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_mvaOutput_normalization"),
+    mapping = cms.VPSet(
+        cms.PSet(
+            category = cms.uint32(0),
+            cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff90"),
+            variable = cms.string("pt"),
+        )
+    )
+)
+
+process.rerunDiscriminationByIsolationOldDMMVArun2v1Loose = process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationOldDMMVArun2v1Loose.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff80")
+process.rerunDiscriminationByIsolationOldDMMVArun2v1Medium = process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationOldDMMVArun2v1Medium.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff70")
+process.rerunDiscriminationByIsolationOldDMMVArun2v1Tight = process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationOldDMMVArun2v1Tight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff60")
+process.rerunDiscriminationByIsolationOldDMMVArun2v1VTight = process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationOldDMMVArun2v1VTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff50")
+process.rerunDiscriminationByIsolationOldDMMVArun2v1VVTight = process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationOldDMMVArun2v1VVTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff40")
+
+process.rerunDiscriminationByIsolationNewDMMVArun2v1raw = process.rerunDiscriminationByIsolationOldDMMVArun2v1raw.clone()
+process.rerunDiscriminationByIsolationNewDMMVArun2v1raw.mvaName = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1")
+process.rerunDiscriminationByIsolationNewDMMVArun2v1raw.mvaOpt = cms.string("DBnewDMwLT")
+
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose = process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.toMultiplex = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1raw')
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.key = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1raw:category')
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1_mvaOutput_normalization")
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1_WPEff90")
+
+process.rerunDiscriminationByIsolationNewDMMVArun2v1Loose = process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationNewDMMVArun2v1Loose.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1_WPEff80")
+process.rerunDiscriminationByIsolationNewDMMVArun2v1Medium = process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationNewDMMVArun2v1Medium.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1_WPEff70")
+process.rerunDiscriminationByIsolationNewDMMVArun2v1Tight = process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationNewDMMVArun2v1Tight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1_WPEff60")
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VTight = process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1_WPEff50")
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VVTight = process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose.clone()
+process.rerunDiscriminationByIsolationNewDMMVArun2v1VVTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBnewDMwLT2016v1_WPEff40")
+
+process.rerunMvaIsolationSequence = cms.Sequence(
+    process.rerunDiscriminationByIsolationOldDMMVArun2v1raw
+    *process.rerunDiscriminationByIsolationOldDMMVArun2v1VLoose
+    *process.rerunDiscriminationByIsolationOldDMMVArun2v1Loose
+    *process.rerunDiscriminationByIsolationOldDMMVArun2v1Medium
+    *process.rerunDiscriminationByIsolationOldDMMVArun2v1Tight
+    *process.rerunDiscriminationByIsolationOldDMMVArun2v1VTight
+    *process.rerunDiscriminationByIsolationOldDMMVArun2v1VVTight
+    *process.rerunDiscriminationByIsolationNewDMMVArun2v1raw
+    *process.rerunDiscriminationByIsolationNewDMMVArun2v1VLoose
+    *process.rerunDiscriminationByIsolationNewDMMVArun2v1Loose
+    *process.rerunDiscriminationByIsolationNewDMMVArun2v1Medium
+    *process.rerunDiscriminationByIsolationNewDMMVArun2v1Tight
+    *process.rerunDiscriminationByIsolationNewDMMVArun2v1VTight
+    *process.rerunDiscriminationByIsolationNewDMMVArun2v1VVTight
+)
+
+embedID = cms.EDProducer("PATTauIDEmbedder",
+    src = cms.InputTag('slimmedTaus'),
+    tauIDSources = cms.PSet(
+        byIsolationMVArun2v1DBoldDMwLTraw2016 = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1raw'),
+        byVLooseIsolationMVArun2v1DBoldDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1VLoose'),
+        byLooseIsolationMVArun2v1DBoldDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1Loose'),
+        byMediumIsolationMVArun2v1DBoldDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1Medium'),
+        byTightIsolationMVArun2v1DBoldDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1Tight'),
+        byVTightIsolationMVArun2v1DBoldDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1VTight'),
+        byVVTightIsolationMVArun2v1DBoldDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationOldDMMVArun2v1VVTight'),
+        byIsolationMVArun2v1DBnewDMwLTraw2016 = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1raw'),
+        byVLooseIsolationMVArun2v1DBnewDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1VLoose'),
+        byLooseIsolationMVArun2v1DBnewDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1Loose'),
+        byMediumIsolationMVArun2v1DBnewDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1Medium'),
+        byTightIsolationMVArun2v1DBnewDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1Tight'),
+        byVTightIsolationMVArun2v1DBnewDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1VTight'),
+        byVVTightIsolationMVArun2v1DBnewDMwLT2016 = cms.InputTag('rerunDiscriminationByIsolationNewDMMVArun2v1VVTight')
+    ),
+)
+setattr(process, "NewTauIDsEmbedded", embedID)
    
 process.produceTauIdMVATrainingNtupleMiniAODSequence = cms.Sequence()
 
@@ -111,9 +210,10 @@ srcWeights = []
 #--------------------------------------------------------------------------------
 
 process.tauIdMVATrainingNtupleProducerMiniAOD = cms.EDProducer("TauIdMVATrainingNtupleProducerMiniAOD",
-    srcRecTaus = cms.InputTag('slimmedTaus'),
+    srcRecTaus = cms.InputTag('NewTauIDsEmbedded'),#slimmedTaus
     srcPrunedGenParticles = cms.InputTag('prunedGenParticles'),
     srcPackedGenParticles = cms.InputTag('packedGenParticles'),
+    #srcRecJets = cms.InputTag('slimmedJets'),
     minGenVisPt = cms.double(10.),
     dRmatch = cms.double(0.3),
     tauIdDiscriminators = cms.PSet(
@@ -123,6 +223,7 @@ process.tauIdMVATrainingNtupleProducerMiniAOD = cms.EDProducer("TauIdMVATraining
         byLooseCombinedIsolationDeltaBetaCorr3Hits = cms.string('byLooseCombinedIsolationDeltaBetaCorr3Hits'),
         byMediumCombinedIsolationDeltaBetaCorr3Hits = cms.string('byMediumCombinedIsolationDeltaBetaCorr3Hits'),
         byTightCombinedIsolationDeltaBetaCorr3Hits = cms.string('byTightCombinedIsolationDeltaBetaCorr3Hits'),
+
         byIsolationMVArun2v1DBoldDMwLTraw = cms.string("byIsolationMVArun2v1DBoldDMwLTraw"),
         byVLooseIsolationMVArun2v1DBoldDMwLT = cms.string("byVLooseIsolationMVArun2v1DBoldDMwLT"),
         byLooseIsolationMVArun2v1DBoldDMwLT = cms.string("byLooseIsolationMVArun2v1DBoldDMwLT"),
@@ -130,6 +231,7 @@ process.tauIdMVATrainingNtupleProducerMiniAOD = cms.EDProducer("TauIdMVATraining
         byTightIsolationMVArun2v1DBoldDMwLT = cms.string("byTightIsolationMVArun2v1DBoldDMwLT"),
         byVTightIsolationMVArun2v1DBoldDMwLT = cms.string("byVTightIsolationMVArun2v1DBoldDMwLT"),
         byVVTightIsolationMVArun2v1DBoldDMwLT = cms.string("byVVTightIsolationMVArun2v1DBoldDMwLT"),
+
         byIsolationMVArun2v1DBnewDMwLTraw = cms.string("byIsolationMVArun2v1DBnewDMwLTraw"),
         byVLooseIsolationMVArun2v1DBnewDMwLT = cms.string("byVLooseIsolationMVArun2v1DBnewDMwLT"),
         byLooseIsolationMVArun2v1DBnewDMwLT = cms.string("byLooseIsolationMVArun2v1DBnewDMwLT"),
@@ -137,6 +239,7 @@ process.tauIdMVATrainingNtupleProducerMiniAOD = cms.EDProducer("TauIdMVATraining
         byTightIsolationMVArun2v1DBnewDMwLT = cms.string("byTightIsolationMVArun2v1DBnewDMwLT"),
         byVTightIsolationMVArun2v1DBnewDMwLT = cms.string("byVTightIsolationMVArun2v1DBnewDMwLT"),
         byVVTightIsolationMVArun2v1DBnewDMwLT = cms.string("byVVTightIsolationMVArun2v1DBnewDMwLT"),
+
         byIsolationMVArun2v1DBdR03oldDMwLTraw = cms.string("byIsolationMVArun2v1DBdR03oldDMwLTraw"),
         byVLooseIsolationMVArun2v1DBdR03oldDMwLT = cms.string("byVLooseIsolationMVArun2v1DBdR03oldDMwLT"),
         byLooseIsolationMVArun2v1DBdR03oldDMwLT = cms.string("byLooseIsolationMVArun2v1DBdR03oldDMwLT"),
@@ -144,6 +247,23 @@ process.tauIdMVATrainingNtupleProducerMiniAOD = cms.EDProducer("TauIdMVATraining
         byTightIsolationMVArun2v1DBdR03oldDMwLT = cms.string("byTightIsolationMVArun2v1DBdR03oldDMwLT"),
         byVTightIsolationMVArun2v1DBdR03oldDMwLT = cms.string("byVTightIsolationMVArun2v1DBdR03oldDMwLT"),
         byVVTightIsolationMVArun2v1DBdR03oldDMwLT = cms.string("byVVTightIsolationMVArun2v1DBdR03oldDMwLT"),
+
+        byIsolationMVArun2v1DBoldDMwLTraw2016 = cms.string("byIsolationMVArun2v1DBoldDMwLTraw2016"),
+        byVLooseIsolationMVArun2v1DBoldDMwLT2016 = cms.string("byVLooseIsolationMVArun2v1DBoldDMwLT2016"),
+        byLooseIsolationMVArun2v1DBoldDMwLT2016 = cms.string("byLooseIsolationMVArun2v1DBoldDMwLT2016"),
+        byMediumIsolationMVArun2v1DBoldDMwLT2016 = cms.string("byMediumIsolationMVArun2v1DBoldDMwLT2016"),
+        byTightIsolationMVArun2v1DBoldDMwLT2016 = cms.string("byTightIsolationMVArun2v1DBoldDMwLT2016"),
+        byVTightIsolationMVArun2v1DBoldDMwLT2016 = cms.string("byVTightIsolationMVArun2v1DBoldDMwLT2016"),
+        byVVTightIsolationMVArun2v1DBoldDMwLT2016 = cms.string("byVVTightIsolationMVArun2v1DBoldDMwLT2016"),
+
+        byIsolationMVArun2v1DBnewDMwLTraw2016 = cms.string("byIsolationMVArun2v1DBnewDMwLTraw2016"),
+        byVLooseIsolationMVArun2v1DBnewDMwLT2016 = cms.string("byVLooseIsolationMVArun2v1DBnewDMwLT2016"),
+        byLooseIsolationMVArun2v1DBnewDMwLT2016 = cms.string("byLooseIsolationMVArun2v1DBnewDMwLT2016"),
+        byMediumIsolationMVArun2v1DBnewDMwLT2016 = cms.string("byMediumIsolationMVArun2v1DBnewDMwLT2016"),
+        byTightIsolationMVArun2v1DBnewDMwLT2016 = cms.string("byTightIsolationMVArun2v1DBnewDMwLT2016"),
+        byVTightIsolationMVArun2v1DBnewDMwLT2016 = cms.string("byVTightIsolationMVArun2v1DBnewDMwLT2016"),
+        byVVTightIsolationMVArun2v1DBnewDMwLT2016 = cms.string("byVVTightIsolationMVArun2v1DBnewDMwLT2016"),
+
         againstMuonLoose3 = cms.string('againstMuonLoose3'),
         againstMuonTight3 = cms.string('againstMuonTight3')
     ),
@@ -196,7 +316,7 @@ process.tauIdMVATrainingNtupleProducerMiniAOD = cms.EDProducer("TauIdMVATraining
 #setattr(process.tauIdMVATrainingNtupleProducerMiniAOD.isolationPtSums, psetName, pset)
 process.produceTauIdMVATrainingNtupleMiniAODSequence += process.tauIdMVATrainingNtupleProducerMiniAOD
 
-process.p = cms.Path(process.produceTauIdMVATrainingNtupleMiniAODSequence)
+process.p = cms.Path(process.rerunMvaIsolationSequence*getattr(process, "NewTauIDsEmbedded")*process.produceTauIdMVATrainingNtupleMiniAODSequence)
 #process.printEventContent = cms.EDAnalyzer("EventContentAnalyzer")
 #process.printFirstEventContentPath = cms.Path(process.printEventContent)
 #process.Schedule = cms.Schedule(process.p, process.printFirstEventContentPath)
