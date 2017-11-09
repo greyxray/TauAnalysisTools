@@ -35,18 +35,8 @@ def _decode_dict(data):
         rv[key] = value
     return rv
 
-version = 'tauId_dR03'#'tauId_v3_0'
+DM = "old"
 train_option = 'optaDBAll'
-
-# Set this to true if you want to compute ROC curves for additional
-# discriminators for comparisons on ALL events available in the ntuples
-# NB: if pt-dependent pruning is used, this will not result in an
-# apples-to-apples comparison!
-computeROConAllEvents = False
-
-inputFilePath  = "/nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_allPhotonsCut_allIsoCones/ntuples/"
-
-outputFilePath = "/nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_allPhotonsCut_allIsoCones/%s/trainfilesfinal_WIP1/" % version
 
 with open('trainingsets.json') as f:
     ff = json.load(f, object_hook=_decode_dict)
@@ -67,37 +57,52 @@ for tval in trainings.values():
     replaceCommomns('commonOtherVariables', commonsDict['commonOtherVariables'], tval["otherVariables"])
     replaceCommomns('commonSpectatorVariables', commonsDict['commonSpectatorVariables'], tval["spectatorVariables"])
 
+decaymodes = {
+    "old": {
+        "mvaDiscriminators": {
+            'mvaIsolation3HitsDeltaR03opt2aLTDB': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB'],
+            'mvaIsolation3HitsDeltaR03opt2aLTDB_0p5': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_0p5'],
+            'mvaIsolation3HitsDeltaR03opt2aLTDB_1p0': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_1p0'],
+            'mvaIsolation3HitsDeltaR03opt2aLTDB_1p5': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_1p5']
+        },
+        "cutDiscriminators": {
+            'rawMVAoldDMdR03wLT': cutDiscriminatorsAll['rawMVAoldDMdR03wLT']
+        },
+        "plots": {
+            'mvaIsolation_optDeltaR03BDeltaBeta' : {
+                'graphs' : [
+                    'mvaIsolation3HitsDeltaR03opt2aLTDB',
+                    'mvaIsolation3HitsDeltaR03opt2aLTDB_0p5',
+                    'mvaIsolation3HitsDeltaR03opt2aLTDB_1p0',
+                    'mvaIsolation3HitsDeltaR03opt2aLTDB_1p5',
+                    'rawMVAoldDMdR03wLT'
+                ]
+            }
+        },
+        "version": 'tauId_dR03_old_v2'
+    }
+}
+
+# Set this to true if you want to compute ROC curves for additional
+# discriminators for comparisons on ALL events available in the ntuples
+# NB: if pt-dependent pruning is used, this will not result in an
+# apples-to-apples comparison!
+computeROConAllEvents = False
+version = decaymodes[DM]["version"]
+inputFilePath  = "/nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_allPhotonsCut_allIsoCones/ntuples/"
+outputFilePath = "/nfs/dust/cms/user/glusheno/TauIDMVATraining2016/Summer16_25ns_V1_allPhotonsCut_allIsoCones/%s/trainfilesfinal_WIP1/" % version
+
+
 # DO NOT process isodR03 and isodR05 together! - different input variables
 # preselection root-files can be shared only if thew follow the same preselection choice (1 of 4)
-mvaDiscriminators = {
-    # 'mvaIsolation3HitsDeltaR03opt1aLTDB': trainings['mvaIsolation3HitsDeltaR03opt1aLTDB'], # this one should have different presel input file
-    'mvaIsolation3HitsDeltaR03opt1aLTDB': trainings['mvaIsolation3HitsDeltaR03opt1aLTDB'], # only untill will be possible to lead the trainings
-    'mvaIsolation3HitsDeltaR03opt2aLTDB': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB'],
-    'mvaIsolation3HitsDeltaR03opt2aLTDB_0p5': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_0p5'],
-    'mvaIsolation3HitsDeltaR03opt2aLTDB_1p0': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_1p0'],
-    'mvaIsolation3HitsDeltaR03opt2aLTDB_1p5': trainings['mvaIsolation3HitsDeltaR03opt2aLTDB_1p5']
-}
+mvaDiscriminators = decaymodes[DM]["mvaDiscriminators"]
 
 # to ensure the final reweighting root files will be suitable for larger spectra of trainings
 for value in mvaDiscriminators.values():
     value["spectatorVariables"] += commonsDict['commonOtherVariables']
 
-cutDiscriminators = {
-    'rawMVAoldDMdR03wLT': cutDiscriminatorsAll['rawMVAoldDMdR03wLT']
-}
-
-plots = {
-    'mvaIsolation_optDeltaR03BDeltaBeta' : {
-        'graphs' : [
-            # 'mvaIsolation3HitsDeltaR03opt1aLTDB',
-            'mvaIsolation3HitsDeltaR03opt2aLTDB',
-            'mvaIsolation3HitsDeltaR03opt2aLTDB_0p5',
-            'mvaIsolation3HitsDeltaR03opt2aLTDB_1p0',
-            'mvaIsolation3HitsDeltaR03opt2aLTDB_1p5',
-            'rawMVAoldDMdR03wLT'
-        ]
-    }
-}
+cutDiscriminators = decaymodes[DM]["cutDiscriminators"]
+plots = decaymodes[DM]["plots"]
 
 allDiscriminators = {}
 allDiscriminators.update(mvaDiscriminators)
@@ -113,6 +118,11 @@ for massPoint in smHiggsMassPoints:
 backgroundSamples = [
     "TT_powheg"
 ]
+
+# sh = SamplesHandles("2016dR03")
+# signalSamples = sh.getSamplesSg16().keys()
+# backgroundSamples = sh.getSamplesBg16().keys()
+# exit(1)
 
 execDir = "%s/bin/%s/" % (os.environ['CMSSW_BASE'], os.environ['SCRAM_ARCH'])
 
